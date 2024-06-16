@@ -37,16 +37,7 @@ const questionSchema = new Schema({
     required: true,
     default: 0
   },
-  attemptOptions: [{
-    optionChosen: {
-      type: Number,
-      required: true
-    },
-    isCorrect: {
-      type: Boolean,
-      required: true
-    }
-  }]
+ 
 });
 
 // Schema for the overall quiz attempt
@@ -56,14 +47,7 @@ const AttemptSchema = new Schema({
     required: true
   },
   attempts: [questionSchema],
-  correctCounts: {
-    type: Number,
-    required: true
-  },
-  totalAttempts: {
-    type: Number,
-    required: true
-  }
+  
 });
 
 const Attempt = mongoose.model("Attempt", AttemptSchema);
