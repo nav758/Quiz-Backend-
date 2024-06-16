@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Attempt = require('../models/Attempt');
 
 const submitQuiz = async (req, res) => {
-  const { quizId, attempts, correctCount, totalAttempts } = req.body;
+  const { quizId, attempts } = req.body;
 
   try {
     // Find the existing attempt document
@@ -19,22 +19,24 @@ const submitQuiz = async (req, res) => {
           switch (attempt.selectedOption) {
             case 0:
               existingQuestion.optionChosen0 += 1;
+              existingQuestion.questionAttempts += 1;
               break;
             case 1:
               existingQuestion.optionChosen1 += 1;
+              existingQuestion.questionAttempts += 1;
               break;
             case 2:
               existingQuestion.optionChosen2 += 1;
+              existingQuestion.questionAttempts += 1;
               break;
             case 3:
               existingQuestion.optionChosen3 += 1;
+              existingQuestion.questionAttempts += 1;
               break;
-            default:
+            default: 
               break;
           }
 
-          existingQuestion.questionAttempts += 1;
-          existingQuestion.attemptOptions.push({ optionChosen: attempt.selectedOption, isCorrect: attempt.isCorrect });
         } else {
           const newQuestion = {
             questionId: attempt.questionId,
@@ -44,14 +46,12 @@ const submitQuiz = async (req, res) => {
             optionChosen2: attempt.selectedOption === 2 ? 1 : 0,
             optionChosen3: attempt.selectedOption === 3 ? 1 : 0,
             questionAttempts: 1,
-            attemptOptions: [{ optionChosen: attempt.selectedOption, isCorrect: attempt.isCorrect }]
           };
           existingAttempt.attempts.push(newQuestion);
         }
       });
 
-      existingAttempt.correctCounts += correctCount;
-      existingAttempt.totalAttempts = totalAttempts;
+      
 
       const savedAttempt = await existingAttempt.save();
       res.status(200).json({ message: 'Quiz updated successfully', savedAttempt });
@@ -67,10 +67,8 @@ const submitQuiz = async (req, res) => {
           optionChosen2: attempt.selectedOption === 2 ? 1 : 0,
           optionChosen3: attempt.selectedOption === 3 ? 1 : 0,
           questionAttempts: 1,
-          attemptOptions: [{ optionChosen: attempt.selectedOption, isCorrect: attempt.isCorrect }]
         })),
-        correctCounts: correctCount,
-        totalAttempts,
+      
       });
 
       const savedAttempt = await newAttempt.save();
